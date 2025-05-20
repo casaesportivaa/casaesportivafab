@@ -1,0 +1,38 @@
+import os
+import shutil
+
+# Número total de partes (pastas)
+num_pastas = 3
+
+# Diretório onde estão os arquivos (neste caso, o diretório atual)
+diretorio_atual = '.'
+
+# Lista de arquivos na raiz (exclui pastas e o próprio script)
+arquivos = [
+    f for f in os.listdir(diretorio_atual)
+    if os.path.isfile(f) and not f.endswith('.py')
+]
+
+# Ordena para garantir consistência
+arquivos.sort()
+
+# Divide em 3 partes
+tamanho_parte = len(arquivos) // num_pastas
+resto = len(arquivos) % num_pastas
+
+indice = 0
+for i in range(num_pastas):
+    nome_pasta = f'parte_{i + 1}'
+    os.makedirs(nome_pasta, exist_ok=True)
+    
+    # Se sobrou algum, distribui um a mais para os primeiros
+    fim = indice + tamanho_parte + (1 if i < resto else 0)
+
+    for arquivo in arquivos[indice:fim]:
+        origem = os.path.join(diretorio_atual, arquivo)
+        destino = os.path.join(nome_pasta, arquivo)
+        shutil.move(origem, destino)
+
+    indice = fim
+
+print("Arquivos divididos em 3 pastas com sucesso.")
